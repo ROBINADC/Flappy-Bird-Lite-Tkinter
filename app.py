@@ -9,8 +9,6 @@ Created on 2019/12/22
 __author__ = "Yihang Wu"
 
 import os
-import time
-import datetime
 
 from tkinter import Tk, Button
 
@@ -18,7 +16,7 @@ from settings import Settings
 from background import Background
 from bird import Bird
 from tubes import Tubes
-from utils import get_photo_image
+from utils import get_photo_image, Timer
 
 
 class App(Tk, Settings):
@@ -28,7 +26,7 @@ class App(Tk, Settings):
     _score = 0
     _buttons = []
     _playing = False
-    _time = '%H:%M:%S'
+    _timer = Timer()
 
     def __init__(self):
 
@@ -132,8 +130,6 @@ class App(Tk, Settings):
             descend_speed=self._bird_descend_speed, event=self.bird_event
         )
 
-
-
     def create_title_image(self):
         self._background.create_image(self._width // 2, self._height * self.title_scaled_pos_y,
                                       image=self._title_image)
@@ -225,7 +221,7 @@ class App(Tk, Settings):
         )
 
         self._background.create_text(
-            time_x, time_y, text=f"Time: {self._time}", fill=self.scoreboard_fill, font=font
+            time_x, time_y, text=f"Time: {str(self._timer)}", fill=self.scoreboard_fill, font=font
         )
 
     def start(self, event=None):
@@ -242,7 +238,7 @@ class App(Tk, Settings):
 
         # Reinitialize score and time
         self._score = 0
-        self._time = time.time()
+        self._timer.start()
 
         # Remove menu buttons
         self.delete_menu_buttons()
@@ -312,9 +308,7 @@ class App(Tk, Settings):
 
     def gameover(self):
 
-        self._time = int(time.time() - float(self._time))
-        self._time = str(
-            datetime.timedelta(seconds=self._time))  # A kind of formating, use str to get the formatted time
+        self._timer.stop()
 
         self._background.stop()
         self._tubes.stop()
