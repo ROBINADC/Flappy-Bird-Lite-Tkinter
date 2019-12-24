@@ -33,7 +33,7 @@ class Bird(Thread):
     # 当鸟执行一次跳跃动作时,它会上升多少距离(/屏幕宽度),e.g.数值为0.5,每次跳跃都会跳半屏的距离
 
     def __init__(self, background, gameover_function, fp, screen_width, screen_height,
-                 descend_speed, climb_speed=3, event="<Up>"):
+                 descend_speed, climb_speed=3, event="<Up>", immortal=False):
 
         # Type Check
         if not isinstance(background, Background):
@@ -48,6 +48,7 @@ class Bird(Thread):
         self._height = screen_height
         self._descend_speed = descend_speed
         self._climb_speed = climb_speed
+        self._immortal = immortal
 
         # Set decends and climbs according to window width
         self.max_descend = int(self.scaled_max_descend * self._height + 0.5)
@@ -87,7 +88,7 @@ class Bird(Thread):
 
         # Set a error value to each coordinate, in case it dies too precisely
         position[0] += int(0.33 * self.width)
-        position[1] += int(0.33 * self.height)
+        position[1] += int(0.30 * self.height)
         position[2] -= int(0.26 * self.width)
         position[3] -= int(0.13 * self.height)
 
@@ -114,7 +115,9 @@ class Bird(Thread):
         This method will be called when the certain key (<Up>) is pressed
         """
 
-        self.check_collision()
+        # Immortal Option
+        if not self._immortal:
+            self.check_collision()
 
         # If the bird died, return
         if not self._alive or not self._running:
@@ -144,7 +147,14 @@ class Bird(Thread):
 
         self._running = True
 
-        self.check_collision()
+        # Immortal Option
+        if self._immortal:
+            position = list(self._canvas.bbox(self._tag))
+            if position[3] >= self._height + 20:
+                self._canvas.after(self._descend_speed, self.run)
+                return
+        else:
+            self.check_collision()
 
         if self._going_down < self.max_descend:
             self._going_down += 0.05
