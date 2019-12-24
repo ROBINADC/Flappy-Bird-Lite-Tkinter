@@ -1,34 +1,33 @@
 # -*- coding: utf-8 -*-
+
 """
-Created on 2019/12/13
-
-@author: Robin
-
-This is used to 
-
-refer: 
+Main application of Flappy bird
+refer: https://github.com/geekcomputers/Python/tree/master/Flappy%20Bird%20-%20created%20with%20tkinter
+Created on 2019/12/22
 """
+
+__author__ = "Yihang Wu"
 
 import os
 import time
 import datetime
 
-import tkinter.messagebox
 from tkinter import Tk, Button
 
 from settings import Settings
 from background import Background
 from bird import Bird
+from tubes import Tubes
 from utils import get_photo_image
 
 
 class App(Tk, Settings):
-    _background_animation_speed = 720
+    _background_animation_speed = 720  # A scaled speed for background animation
+    _bird_descend_speed = 38.4  # A scaled speed for bird descending
     _bestscore = 0
-    _bird_descend_speed = 38.4
+    _score = 0
     _buttons = []
     _playing = False
-    _score = 0
     _time = '%H:%M:%S'
 
     def __init__(self):
@@ -39,6 +38,7 @@ class App(Tk, Settings):
         # Component
         self._background = None
         self._bird = None
+        self._tubes = None
 
         # Window Size
         if self.window_width and self.window_height:
@@ -94,12 +94,45 @@ class App(Tk, Settings):
 
         # Set background animation speed according to window width
         # 不知道数值是怎么得出来的
-        self._background_animation_speed //= self._width / 100
-        self._background_animation_speed = int(self._background_animation_speed)
+        self._background_animation_speed = int(self._background_animation_speed / (self._width / 100))
 
         # Set bird descend speed according to window height
-        self._bird_descend_speed //= self._height / 100
-        self._bird_descend_speed = int(self._bird_descend_speed)
+        self._bird_descend_speed = int(self._bird_descend_speed / (self._height / 100))
+
+    def initialize(self):
+        """
+        Method to initialize all the components and start the game
+        """
+
+        # Load best score
+        self.load_score()
+
+        self._background = Background(
+            self, self._width, self._height, fp=self.background_fp, animation_speed=self._background_animation_speed
+        )
+
+        self._background.focus_force()  # ?
+
+        self._background.bind(self.window_fullscreen_event, self.change_fullscreen_option)
+        self._background.bind(self.window_start_event, self.start)
+        self._background.bind(self.window_exit_event, self.close)
+
+        # 用self.close注册"WM_DELETE_WINDOW"协议
+        # 当用户使用窗口管理器显式关闭窗口时,调用self.close函数,先记录分数,再退出
+        self.protocol("WM_DELETE_WINDOW", self.close)
+
+        self._background.pack()  # ?
+
+        self.create_title_image()
+
+        self.create_menu_buttons()
+
+        self._bird = Bird(
+            self._background, self.gameover, self.bird_fp, self._width, self._height,
+            descend_speed=self._bird_descend_speed, event=self.bird_event
+        )
+
+
 
     def create_title_image(self):
         self._background.create_image(self._width // 2, self._height * self.title_scaled_pos_y,
@@ -205,6 +238,8 @@ class App(Tk, Settings):
         if self._playing:
             return
 
+        self._playing = True
+
         # Reinitialize score and time
         self._score = 0
         self._time = time.time()
@@ -223,7 +258,14 @@ class App(Tk, Settings):
             descend_speed=self._bird_descend_speed, event=self.bird_event
         )
 
+        self._tubes = Tubes(
+            self._background, self._bird, self._width, self._height, score_function=self.increase_score,
+            tube_body_fp=self.tube_fp[0], tube_mouth_fp=self.tube_fp[1],
+            animation_speed=self._background_animation_speed
+        )
+
         self._bird.start()
+        self._tubes.start()
 
     def close(self, event=None):
         """
@@ -271,9 +313,11 @@ class App(Tk, Settings):
     def gameover(self):
 
         self._time = int(time.time() - float(self._time))
-        self._time = str(datetime.timedelta(seconds=self._time))  # A kind of formating, use str to get the formatted time
+        self._time = str(
+            datetime.timedelta(seconds=self._time))  # A kind of formating, use str to get the formatted time
 
         self._background.stop()
+        self._tubes.stop()
 
         # Set _playing=False
         # 否则,按下Enter的时候,self.start()不会被运行,背景不被重置,依旧会动,并且会叠加
@@ -282,39 +326,6 @@ class App(Tk, Settings):
         self.create_menu_buttons()
         self.create_title_image()
         self.create_scoreboard()
-
-    def initialize(self):
-        """
-        Method to initialize all the components and start the game
-        """
-
-        # Load best score
-        self.load_score()
-
-        self._background = Background(
-            self, self._width, self._height, fp=self.background_fp, animation_speed=self._background_animation_speed
-        )
-
-        self._background.focus_force()  # ?
-
-        self._background.bind(self.window_fullscreen_event, self.change_fullscreen_option)
-        self._background.bind(self.window_start_event, self.start)
-        self._background.bind(self.window_exit_event, self.close)
-
-        # 用self.close注册"WM_DELETE_WINDOW"协议
-        # 当用户使用窗口管理器显式关闭窗口时,调用self.close函数,先记录分数,再退出
-        self.protocol("WM_DELETE_WINDOW", self.close)
-
-        self._background.pack()  # ?
-
-        self.create_title_image()
-
-        self.create_menu_buttons()
-
-        self._bird = Bird(
-            self._background, self.gameover, self.bird_fp, self._width, self._height,
-            descend_speed=self._bird_descend_speed, event=self.bird_event
-        )
 
 
 if __name__ == '__main__':

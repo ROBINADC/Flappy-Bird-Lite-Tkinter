@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
 """
-This is used to 
-refer:
+Bird class
 Created on 2019/12/22 
 """
+
+__author__ = "Yihang Wu"
 
 from threading import Thread
 
 from background import Background
 from utils import get_photo_image
-
-__author__ = "Yihang Wu"
 
 
 class Bird(Thread):
@@ -33,8 +32,8 @@ class Bird(Thread):
 
     # 当鸟执行一次跳跃动作时,它会上升多少距离(/屏幕宽度),e.g.数值为0.5,每次跳跃都会跳半屏的距离
 
-    def __init__(self, background, gameover_function, fp, *screen_geometry,
-                 climb_speed=3, descend_speed=5, event="<Up>"):
+    def __init__(self, background, gameover_function, fp, screen_width, screen_height,
+                 descend_speed, climb_speed=3, event="<Up>"):
 
         # Type Check
         if not isinstance(background, Background):
@@ -45,10 +44,10 @@ class Bird(Thread):
         self._canvas = background
         self.gameover_method = gameover_function
         self.image_path = fp
-        self._width = screen_geometry[0]
-        self._height = screen_geometry[1]
-        self._climb_speed = climb_speed
+        self._width = screen_width
+        self._height = screen_height
         self._descend_speed = descend_speed
+        self._climb_speed = climb_speed
 
         # Set decends and climbs according to window width
         self.max_descend = int(self.scaled_max_descend * self._height + 0.5)

@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
+
 """
-Created on 2019/12/13
-
-@author: Robin
-
-This is used to 
-
-refer: 
+Settings class
+Created on 2019/12/22
 """
+
+__author__ = "Yihang Wu"
 
 import os
-
 import json
 
 

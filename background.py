@@ -1,28 +1,29 @@
 # -*- coding: utf-8 -*-
+
 """
-This is used to
-refer:
+Class - Background
+run() - make the background moving
 Created on 2019/12/22
 """
+
+__author__ = "Yihang Wu"
 
 from tkinter import Tk, Canvas
 
 from utils import get_photo_image
 
-__author__ = "Yihang Wu"
-
 
 class Background(Canvas):
-    _background = []
-    _stop = False
+    _background = []  # list for background id
+    _stop = False  # indicate if the background is still rather than moving
 
-    def __init__(self, tk_instance, *geometry, fp, animation_speed=50):
+    def __init__(self, tk_instance, width, height, fp, animation_speed=50):
 
         if not isinstance(tk_instance, Tk):
             raise TypeError('Argument "tk_instance" must be an instance of Tk')
 
-        self._width = geometry[0]
-        self._height = geometry[1]
+        self._width = width
+        self._height = height
 
         self.image_path = fp
         self.animation_speed = animation_speed
@@ -70,9 +71,6 @@ class Background(Canvas):
             # execute this function every period of time
             self.after(self.animation_speed, self.run)
 
-    def stop(self):
-        self._stop = True
-
     def reset(self):
         """
         Reset the background
@@ -92,6 +90,9 @@ class Background(Canvas):
         self._background.append(self.create_image(self._width // 2, self._height // 2, image=self._background_image))
         self._background.append(
             self.create_image(self._width + (self._width // 2), self._height // 2, image=self._background_image))
+
+    def stop(self):
+        self._stop = True
 
     def get_background_id(self):
         """
