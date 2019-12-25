@@ -10,7 +10,7 @@ __author__ = "Yihang Wu"
 
 from tkinter import Tk, Canvas
 
-from utils import get_photo_image
+from .utils import get_photo_image
 
 
 class Background(Canvas):

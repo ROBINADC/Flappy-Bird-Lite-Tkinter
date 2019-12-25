@@ -9,14 +9,10 @@ Created on 2019/12/22
 __author__ = "Yihang Wu"
 
 import os
-
 from tkinter import Tk, Button
 
 from settings import Settings
-from background import Background
-from bird import Bird
-from tubes import Tubes
-from utils import get_photo_image, Timer
+from components import Background, Bird, Tubes, Timer, get_photo_image
 
 
 class App(Tk, Settings):
@@ -100,17 +96,18 @@ class App(Tk, Settings):
 
     def initialize(self):
         """
-        Method to initialize all the components and start the game
+        Method to initialize necessary components, bind event
         """
 
         # Load best score
         self.load_score()
 
+        # Create background object
         self._background = Background(
             self, self._width, self._height, fp=self.background_fp, animation_speed=self._background_animation_speed
         )
 
-        self._background.focus_force()  # ?
+        self._background.focus_force()  # ? 获取焦点 ?
 
         self._background.bind(self.window_fullscreen_event, self.change_fullscreen_option)
         self._background.bind(self.window_start_event, self.start)
@@ -122,10 +119,9 @@ class App(Tk, Settings):
         # 当用户使用窗口管理器显式关闭窗口时,调用self.close函数,先记录分数,再退出
         self.protocol("WM_DELETE_WINDOW", self.close)
 
-        self._background.pack()  # ?
+        self._background.pack()  # Pack background object ?
 
         self.create_title_image()
-
         self.create_menu_buttons()
 
         self._bird = Bird(
@@ -336,6 +332,9 @@ class App(Tk, Settings):
             fout.write(hex(self._bestscore))
 
     def gameover(self):
+        """
+        When the bird dies, call this method
+        """
 
         self._timer.stop()
 

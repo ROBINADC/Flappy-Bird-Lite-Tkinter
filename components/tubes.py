@@ -10,9 +10,9 @@ __author__ = "Yihang Wu"
 import random
 from threading import Thread
 
-from background import Background
-from bird import Bird
-from utils import get_photo_image
+from .background import Background
+from .bird import Bird
+from .utils import get_photo_image
 
 
 class Tubes(Thread):

@@ -9,8 +9,8 @@ __author__ = "Yihang Wu"
 
 from threading import Thread
 
-from background import Background
-from utils import get_photo_image
+from .background import Background
+from .utils import get_photo_image
 
 
 class Bird(Thread):

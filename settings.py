@@ -13,7 +13,7 @@ import json
 
 class Settings:
     """
-
+    Settings
     """
 
     # Configuration for window
@@ -34,7 +34,6 @@ class Settings:
     button_fg = "white"
     button_activebackground = "black"
     button_cursor = "hand2"
-    # button_font = ("Impact", 40)
 
     # Configuration for scoreboard
     scoreboard_scaled_width = 0.40
@@ -49,7 +48,6 @@ class Settings:
     title_scaled_width = 0.35
     title_scaled_height = 0.15
     title_scaled_pos_y = 0.20
-
 
     # Event
     bird_event = '<Up>'
@@ -92,7 +90,8 @@ class Settings:
                     setattr(Settings, attr, data[attr])
 
         # create new one
-        except:
+        except IOError:
+
             if not os.path.exists(os.path.split(self.settings_fp)[0]):
                 os.makedirs(os.path.split(self.settings_fp)[0])
 
