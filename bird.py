@@ -23,7 +23,7 @@ class Bird(Thread):
     _going_up = False  # denote whether the bird is going up
     _going_down = 0  # accumulate the going down value, the bird would move down by "_going_down" per descend_speed
     _times_skipped = 0  # accumulate a value, which would record the times that the bird climbs
-    _running = False  # indicate the method run() is running, that means the bird is automatically descending
+    _stop = False  # indicate whether the method run() is stopped, that means whether bird is automatically descending
 
     scaled_max_descend = 0.0038  # A scaled value of maximum descend length (per time unit)
     # 在每一个descend_speed(ms)里,鸟最多下降多少距离(/屏幕宽度),数值越大,鸟的最大下降速度越大
@@ -33,7 +33,7 @@ class Bird(Thread):
     # 当鸟执行一次跳跃动作时,它会上升多少距离(/屏幕宽度),e.g.数值为0.5,每次跳跃都会跳半屏的距离
 
     def __init__(self, background, gameover_function, fp, screen_width, screen_height,
-                 descend_speed, climb_speed=3, event="<Up>", immortal=False):
+                 descend_speed, climb_speed=3, jump_event="<Up>", jump_event_2='<space>', immortal=False):
 
         # Type Check
         if not isinstance(background, Background):
@@ -69,7 +69,8 @@ class Bird(Thread):
 
         # Define a event that raise the bird
         self._canvas.focus_force()  # ?
-        self._canvas.bind(event, self.jumps)
+        self._canvas.bind(jump_event, self.jumps)
+        self._canvas.bind(jump_event_2, self.jumps)
 
         # Set _alive to be True
         self._alive = True
@@ -120,7 +121,7 @@ class Bird(Thread):
             self.check_collision()
 
         # If the bird died, return
-        if not self._alive or not self._running:
+        if not self._alive or self._stop:
             self._going_up = False
             return
 
@@ -144,30 +145,29 @@ class Bird(Thread):
         """
         Method to descend the bird
         """
+        if not self._stop:
 
-        self._running = True
+            # Immortal Option
+            if self._immortal:
+                position = list(self._canvas.bbox(self._tag))
+                if position[3] >= self._height + 20:
+                    self._canvas.after(self._descend_speed, self.run)
+                    return
+            else:
+                self.check_collision()
 
-        # Immortal Option
-        if self._immortal:
-            position = list(self._canvas.bbox(self._tag))
-            if position[3] >= self._height + 20:
+            if self._going_down < self.max_descend:
+                self._going_down += 0.05
+
+            if self._alive:
+                if not self._going_up:
+                    self._canvas.move(self._tag, 0, self._going_down)
+
+                # Execute this funciton again
                 self._canvas.after(self._descend_speed, self.run)
-                return
-        else:
-            self.check_collision()
-
-        if self._going_down < self.max_descend:
-            self._going_down += 0.05
-
-        if self._alive:
-            if not self._going_up:
-                self._canvas.move(self._tag, 0, self._going_down)
-
-            # Execute this funciton again
-            self._canvas.after(self._descend_speed, self.run)
-        else:
-            self._running = False
-            self.gameover_method()
+            else:
+                self._stop = True
+                self.gameover_method()
 
     def kill(self):
         """
@@ -181,3 +181,10 @@ class Bird(Thread):
 
     def tag(self):
         return self._tag
+
+    def stop(self):
+        self._stop = True
+
+    def resume(self):
+        self._stop = False
+        self.run()

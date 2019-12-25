@@ -26,6 +26,7 @@ class App(Tk, Settings):
     _score = 0
     _buttons = []
     _playing = False
+    _paused = False
     _timer = Timer()
 
     def __init__(self):
@@ -114,6 +115,8 @@ class App(Tk, Settings):
         self._background.bind(self.window_fullscreen_event, self.change_fullscreen_option)
         self._background.bind(self.window_start_event, self.start)
         self._background.bind(self.window_exit_event, self.close)
+        self._background.bind(self.window_pause_event, self.pause)
+        self._background.bind(self.window_pause_2_event, self.pause)
 
         # 用self.close注册"WM_DELETE_WINDOW"协议
         # 当用户使用窗口管理器显式关闭窗口时,调用self.close函数,先记录分数,再退出
@@ -127,7 +130,7 @@ class App(Tk, Settings):
 
         self._bird = Bird(
             self._background, self.gameover, self.bird_fp, self._width, self._height,
-            descend_speed=self._bird_descend_speed, event=self.bird_event
+            descend_speed=self._bird_descend_speed, jump_event=self.bird_event
         )
 
     def create_title_image(self):
@@ -251,7 +254,7 @@ class App(Tk, Settings):
 
         self._bird = Bird(
             self._background, self.gameover, self.bird_fp, self._width, self._height,
-            descend_speed=self._bird_descend_speed, event=self.bird_event
+            descend_speed=self._bird_descend_speed, jump_event=self.bird_event
         )
 
         self._tubes = Tubes(
@@ -262,6 +265,32 @@ class App(Tk, Settings):
 
         self._bird.start()
         self._tubes.start()
+
+    def pause(self, event=None):
+        """
+        Method to pause or resume the game
+        """
+
+        if not self._playing:
+            return
+
+        if not self._paused:
+            self._paused = True
+            self._timer.pause()
+
+            self._background.stop()
+            self._bird.stop()
+            self._tubes.stop()
+
+        else:
+            self._paused = False
+            self._timer.resume()
+
+            self._background.resume()
+            if self.background_animation:
+                self._background.run()
+            self._bird.resume()
+            self._tubes.resume()
 
     def close(self, event=None):
         """

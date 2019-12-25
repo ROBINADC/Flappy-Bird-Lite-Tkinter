@@ -94,6 +94,9 @@ class Background(Canvas):
     def stop(self):
         self._stop = True
 
+    def resume(self):
+        self._stop = False
+
     def get_background_id(self):
         """
         Return backgrounds' ID in order to ignore collision with them

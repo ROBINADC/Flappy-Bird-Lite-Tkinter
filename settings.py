@@ -53,9 +53,12 @@ class Settings:
 
     # Event
     bird_event = '<Up>'
+    bird_2_event = '<space>'
     window_fullscreen_event = '<F11>'
     window_start_event = '<Return>'
     window_exit_event = '<Escape>'
+    window_pause_event = '<p>'
+    window_pause_2_event = '<P>'
 
     # File Path
     bestscore_fp = 'data/bsc.txt'

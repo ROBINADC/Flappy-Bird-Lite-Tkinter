@@ -163,7 +163,8 @@ class Tubes(Thread):
         if self._stop:
             return
 
-        # x2 of the left-most top tube's mouth
+        # Eliminate the tubes that are out from left side
+        # check if x2 of the left-most top tube's mouth is smaller than 0
         if len(self._tubes) > 0 and self._background.bbox(self._tubes[0][0][0])[2] <= 0:
             # print(self._tubes) -> shape = [n, 2, 2]
             # [
@@ -195,3 +196,7 @@ class Tubes(Thread):
 
     def stop(self):
         self._stop = True
+
+    def resume(self):
+        self._stop = False
+        self.run()
