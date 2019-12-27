@@ -42,7 +42,7 @@ class Settings:
 
     # Configuration for scoreboard font
     scoreboard_font = "Impact"
-    scoreboard_fill = "White"
+    scoreboard_fill = "Black"
 
     # Configuration for title image
     title_scaled_width = 0.35
