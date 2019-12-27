@@ -46,8 +46,8 @@ class Settings:
 
     # Configuration for title image
     title_scaled_width = 0.35
-    title_scaled_height = 0.15
-    title_scaled_pos_y = 0.20
+    title_scaled_height = 0.20
+    title_scaled_pos_y = 0.15
 
     # Event
     bird_event = '<Up>'

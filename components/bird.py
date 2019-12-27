@@ -89,7 +89,7 @@ class Bird(Thread):
 
         # Set a error value to each coordinate, in case it dies too precisely
         position[0] += int(0.33 * self.width)
-        position[1] += int(0.30 * self.height)
+        position[1] += int(0.25 * self.height)
         position[2] -= int(0.26 * self.width)
         position[3] -= int(0.13 * self.height)
 
