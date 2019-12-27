@@ -23,7 +23,7 @@ class Bird(Thread):
     _going_up = False  # denote whether the bird is going up
     _going_down = 0  # accumulate the going down value, the bird would move down by "_going_down" per descend_speed
     _times_skipped = 0  # accumulate a value, which would record the times that the bird climbs
-    _stop = False  # indicate whether the method run() is stopped, that means whether bird is automatically descending
+    _stop = True  # indicate whether the method run() is stopped, that means whether bird is automatically descending
 
     scaled_max_descend = 0.0038  # A scaled value of maximum descend length (per time unit)
     # 在每一个descend_speed(ms)里,鸟最多下降多少距离(/屏幕宽度),数值越大,鸟的最大下降速度越大
@@ -141,10 +141,15 @@ class Bird(Thread):
             self._going_up = False
             self._times_skipped = 0
 
+    def start(self) -> None:
+        self._stop = False
+        super().start()
+
     def run(self) -> None:
         """
         Method to descend the bird
         """
+
         if not self._stop:
 
             # Immortal Option
