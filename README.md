@@ -2,10 +2,6 @@
 
 Simple Flappy Bird game created by tkinter
 
-## Runtime images
-<img src="demo/playing.png" alt="playing.png" width="60%" />
-<img src="demo/game over.png" alt="gameover.png" width="60%" />
-
 ## Requirements
 
 - python3.x
@@ -14,6 +10,10 @@ Simple Flappy Bird game created by tkinter
 ## Reference
 
 The main structure and logic are learned from [here]
+
+## Runtime images
+<img src="demo/playing.png" alt="playing.png" width="60%" />
+<img src="demo/game over.png" alt="gameover.png" width="60%" />
 
 ## Extra
 
